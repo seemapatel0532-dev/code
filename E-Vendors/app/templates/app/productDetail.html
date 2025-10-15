@@ -1,0 +1,113 @@
+{% extends "app/base.html" %}
+
+{% load static %}
+
+{% block title %}Product Details{% endblock title %}
+
+{% block main-content %} 
+<div class="container my-5 mx-auto">
+    <h3 class="alert alert-light border rounded text-center shadow_container p-2">{{ product.title }}</h3>
+    <div class="row flex">
+        <div class="col-12 mb-4">
+            <div class="card h-100 shadow_container p-4">
+                <div class="row no-gutters d-flex justify-content-between">
+                    <div class="col-md-5 text-center shadow_container ms-4 py-4 m-4">
+                        <div class="my-4"><img class="card-img" src="{{ product.image_url.url }}" alt="{{ product.title }}" style="height: 400px; width: 500px;"></div>
+                        <p class="fs-6"><strong class="text-danger">₹{{product.price}}&nbsp;</strong></p> 
+                        {% comment %} <h3 class="alert alert-light border rounded text-center shadow_container p-2">{{ product.title }}</h3> {% endcomment %}
+                        <div class="">
+                            <form action="/add-to-cart" class="d-inline">
+                                <input type="hidden" name="prod_id" value="{{product.id}}">
+                                <button type="submit" class="btn btn-primary shadow px-5 py-2 form-control my-2 fw-bold">Add to cart</button>
+                           </form>
+                             {% comment %} <a href="{% url 'showcart' %}" class="btn btn-warning shadow px-5 py-2 ms-4">Buy Now</a> {% endcomment %}
+                            <a href="{% url 'buynow' product.id %}" class="btn btn-warning shadow form-control my-2 fw-bold">Buy Now</a>
+                            {% if wishlist %}
+                            <a pid="{{product.id}}" class="minus-wishlist btn btn-danger shadow form-control my-2"><i class="fas fa-heart fa-lg"></i></a>
+                            {% else %}
+                            <a pid="{{product.id}}" class="plus-wishlist btn btn-success shadow form-control my-2"><i class="fas fa-heart fa-lg"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-4">
+                        <div class="card-body shadow_container p-4">
+                            <h3 class="alert alert-light alert-sm border rounded text-center shadow_container p-2 m-2">Description</h3>
+                            <p class="fs-5 px-4 m-4">{{product.description}}</p>
+                            <br>
+                            <p class="fs-5 m-2 px-4"><strong>Seller: <a href="{% url 'vendor_info' product.vendor.id %}" class="text-bold">{{product.vendor.vendor_name}}</a><br>Date: </strong>{{product.created_at}}<br><strong>Status: </strong>{{product.status}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container my-5">
+    <!-- Display past reviews -->
+    <h3 class="alert alert-light border rounded text-center shadow_container p-2">Customer Reviews</h3>
+    <div class="row">
+        {% for review in reviews %}
+        <div class="col-12 mb-3">
+            <div class="card shadow_container p-4 fw-bold">
+                <h5 class="card-title">Review by <span class="text-danger">{{ review.name }}</span></h5>
+                <p class="card-text">
+                    <strong>Rating: </strong> <span class="text-success">{{ review.rating }}/5 </span><br>
+                    <strong>Review: </strong> {{ review.review_text }} <br>
+                    <strong>Date: </strong> <span class="text-primary">{{ review.created_at|date:"F d, Y" }}</span>
+                </p>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No reviews yet. Be the first to review this product!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination controls -->
+    <nav aria-label="Review navigation">
+        <ul class="pagination justify-content-center">
+            {% if reviews.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ reviews.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for num in reviews.paginator.page_range %}
+            <li class="page-item {% if reviews.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if reviews.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ reviews.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Review Form -->
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" action="{% url 'submit_review' product.id %}" class="shadow_container fw-bold m-4 p-5">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Write a Review</legend>
+                    {{ form.as_p }}
+                </fieldset>
+                <button type="submit" class="btn btn-primary shadow px-5 py-2 my-2 fw-bold">Add</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-center">You must <a href="{% url 'login' %}">log in</a> to write a review.</p>
+    {% endif %}
+</div>
+
+
+
+
+<br><br/>
+{% endblock main-content %}

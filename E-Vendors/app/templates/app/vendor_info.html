@@ -1,0 +1,74 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Vendor Profile{% endblock title %}
+
+{% block main-content %}
+<div class="container my-5 p-4">
+    <div class="row">
+            <!-- Vendor Information and Products Display -->
+            <div class="col-sm-3">
+                <div class="shadow_container p-4 mb-4">
+                    <h5 class="alert alert-light border rounded text-center">Vendor Information</h5>
+                    <p><strong>Name:</strong> {{ vendor.vendor_name }}</p>
+                    <p><strong>Contact:</strong> {{ vendor.contact_number }}</p>
+                    <p><strong>Location:</strong> {{ vendor.location }}</p>
+                    <p><strong>Status:</strong> {{ vendor.get_status_display }}</p>
+                    <p><strong>Created At:</strong> {{ vendor.created_at }}</p>
+                </div>
+
+            </div>
+
+            <div class="col-sm-9">
+                <div class="row shadow_container mx-4">
+                    {% if products %}
+                    <h3 class="alert alert-light text-center">Available Products</h3>
+                        {% for prod in products %}
+                            <div class="col-md-6 col-lg-4 text-center mx-5">
+                                <a href="{% url 'submit_review' prod.id %}" class="btn">
+                                    <div class="shadow_container p-4 m-4">
+                                        <img src="{{ prod.image_url.url }}" width="300px" height="200px" alt="{{ prod.title }}" class="border rounded shadow_container">
+                                        <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold mt-2">{{ prod.title }}</h5>
+                                        <div class="fw-bold text-danger">Rs. {{ prod.price }}/-</div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                </div>
+                <br>
+                <!-- Pagination -->
+                <div class="row justify-content-center">
+                    <nav aria-label="Product pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for num in products.paginator.page_range %}
+                                {% if products.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if products.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% else %}
+                    <h3 class="alert alert-light text-center">No products found in this category.</h3>
+                {% endif %}
+            </div>
+    </div>
+</div>
+<br><br/>
+{% endblock main-content %}

@@ -1,0 +1,48 @@
+{% extends "app/base.html" %}
+
+{% load static %}
+
+{% block title %}Wishlist{% endblock title %}
+
+{% block main-content %}
+<div class="container my-5 p-4">
+    {% if products %}
+    <div class="row">
+        <div class="col-sm-3 shadow_container p-4">
+            <h3 class="alert alert-light border rounded text-center shadow_container">Wishlists</h3>
+            <div class="list-group shadow_container">
+                    {% for val in products %}
+                        <a href="{% url 'category-title' val.title %}" class="list-group-item list-group-item-action fw-bold" aria-current="true">{{ val.title }}</a>
+                    {% endfor %}
+            </div>
+            <br>
+        </div>
+        <div class="col-sm-9">
+            <div class="row mx-4">
+                {% if products %}
+                    {% for prod in products %}
+                        <div class="col text-center mb-4">
+                            <a href="{% url 'product-detail' prod.id %}" class="btn">
+                                <div class="shadow_container p-4 m-4" style="height:320px; width:350px;">
+                                    <img src="{{ prod.image_url.url }}" width="300px" height="200px" alt="{{ prod.title }}" class="border rounded shadow_container">
+                                    <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold">{{prod.title}}</h5>
+                                    <div class="fw-bold text-danger">Rs. {{ prod.price }}/-</div>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        
+                    {% endfor %}
+                {% else %}
+                <h3 class="alert alert-light border rounded text-center shadow_container"> No products found in this category.</h3>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    {% else %}
+    <h3 class="alert alert-light border rounded text-center shadow-container">Wishlist is Empty</h3>
+    {% endif %}
+</div>
+<br><br/>
+{% endblock main-content %}

@@ -1,0 +1,51 @@
+{% extends "app/base.html" %}
+
+{% load static %}
+
+{% block title %}Orders{% endblock title %}
+
+{% block main-content %}
+
+<div class="container my-4 ">
+    <div class="border rounded p-4 bg-light login-container">
+        <h3 class="alert alert-light border rounded text-center shadow_container">Products Ordered</h3>
+        <div class="row">
+            {% if ord %}
+                <div class="col-12">
+                    <h4 class="text-center p-5 m-5 text-primary border rounded">The Orders are Empty</h4>
+                </div>
+            {% else %}
+                {% for order in orders %}
+                    <div class="col-12 mb-4">
+                        <div class="card h-100 shadow_container">
+                            <div class="row no-gutters d-flex align-items-center">
+                                <div class="col-md-4 text-center">
+                                    <img class="card-img mx-4" src="{{ order.product.image_url.url }}" alt="{{ order.product.title }}" style="height: 250px; width: 400px;">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="border rounded text-center shadow_container btn btn-success px-4 fw-bold">{{order.product.title}}</h5>
+                                        <p class="card-text"><strong>Price:</strong><span class="text-danger fst-italic fw-bolder"> ₹{{ order.total_cost }}</span></p>
+                                        <p class="card-text"><strong>Quantity:</strong> <span class="fst-italic fw-bolder">{{ order.quantity }}</span></p>
+                                        <p class="card-text"><strong>Address:</strong> <span class="fst-italic fw-bolder">{{ order.customer.locality }},&nbsp;{{ order.customer.city }},&nbsp;{{ order.customer.zipcode }},&nbsp;{{ order.customer.state }}</span></p>
+                                        <p class="card-text"><strong>Phone:</strong> <span class="fst-italic fw-bolder">{{ order.customer.mobile }}</span></p>
+                                        <p class="card-text"><strong>Date of Order:</strong> <span class="fst-italic fw-bolder">{{ order.ordered_date }}</span></p>
+                                        <p class="card-text"><strong>Status:</strong> 
+                                            <span class="badge text-bg-{% if order.status == 'Accepted' %}secondary{% elif order.status == 'Packed' %}warning{% elif order.status == 'On The Way' %}info{% elif order.status == 'Delivered' %}success{% elif order.status == 'Cancel' %}danger{% elif order.status == 'Pending' %}primary{% endif %} btn-sm fst-italic">{{ order.status }}</span>
+                                        </p>
+                                        {% comment %} <div class="progress fw-bold bg-success" role="progressbar" aria-label="Basic example" aria-valuenow="{% if order.status == 'Accepted' %}25{% elif order.status == 'Shipped' %}50{% elif order.status == 'On The Way' %}75{% elif order.status == 'Delivered' %}100{% elif order.status == 'Cancel' %}100{% elif order.status == 'Pending' %}0{% endif %}" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar" style="width: {% if order.status == 'Accepted' %}25{% elif order.status == 'Shipped' %}50{% elif order.status == 'On The Way' %}75{% elif order.status == 'Delivered' %}100{% elif order.status == 'Cancel' %}100{% elif order.status == 'Pending' %}0{% endif %}%">{{ order.status }}
+                                            </div>
+                                          </div> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock main-content %}

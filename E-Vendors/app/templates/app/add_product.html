@@ -1,0 +1,48 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Add Product{% endblock title %}
+
+{% block main-content %}
+<div class="container my-5 p-4">
+    <div class="row">
+        <!-- Vendor Information Section -->
+        <div class="col-sm-3">
+            <div class="shadow_container p-4">
+                <h5 class="alert alert-light border rounded text-center shadow_container">Vendor Information</h5>
+                <p><strong>Vendor Name:</strong> {{ vendor.vendor_name }}</p>
+                <p><strong>Contact:</strong> {{ vendor.contact_number }}</p>
+                <p><strong>Location:</strong> {{ vendor.location }}</p>
+                <p><strong>Status:</strong> 
+                    {% if vendor.status == 'active' %}
+                        <span class="text-success">Active</span>
+                    {% else %}
+                        <span class="text-danger">Inactive</span>
+                    {% endif %}
+                </p>
+                <a href="{% url 'vendor_dashboard' %}" class="btn btn-warning shadow px-5 fw-bold">Go To Product Page</a>
+            </div>
+        </div>
+
+        <!-- Product Form Section -->
+        <div class="col-sm-9">
+            <div class="shadow_container p-4">
+                <h3 class="alert alert-light border rounded text-center shadow_container">Add New Product</h3>
+                <form action="" method="post" enctype="multipart/form-data" class="shadow_container p-4 fw-bold">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            <small class="text-danger">{{ field.errors|striptags }}</small>
+                        </div>
+                    {% endfor %}
+                    <input type="submit" value="Add Product" class="btn btn-primary fw-bold">
+                    <input type="reset" class="btn btn-warning fw-bold">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br/>
+{% endblock main-content %}

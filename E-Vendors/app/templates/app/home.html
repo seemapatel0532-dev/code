@@ -1,0 +1,163 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block banner_slider %}
+{% comment %} chatbot {% endcomment %}
+    <script>
+        window.embeddedChatbotConfig = 
+        {
+            chatbotId: "77PveVHXaZNpDBnBb-bKg",
+            domain: "www.chatbase.co"
+        }
+        </script>
+        <script
+        src="https://www.chatbase.co/embed.min.js"
+        chatbotId="77PveVHXaZNpDBnBb-bKg"
+        domain="www.chatbase.co"
+        defer>
+    </script>
+    {% comment %} chatbot {% endcomment %}
+    <div id="carouselExampleSlidesOnly" class="carousel slide m-3 mt-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'app/images/banner/b1.png' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'app/images/banner/b2.jpg' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div>  
+            <div class="carousel-item">
+                <img src="{% static 'app/images/banner/b3.jpg' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div> 
+             <div class="carousel-item">
+                <img src="{% static 'app/images/banner/b4.jpg' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div> 
+            <div class="carousel-item">
+                <img src="{% static 'app/images/banner/b5.jpg' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div> 
+            <div class="carousel-item">
+                <img src="{% static 'app/images/banner/b6.jpg' %}" class="d-block w-100 my-4 border rounded" alt="alt" height="500">
+            </div>         
+        </div> 
+    </div>
+{% endblock banner_slider %}
+
+{% block main-content %}
+<div class="p-4">
+    <div class="row bg-secondary text-center p-5 text-white border-bottom shadow_container mb-5">
+        <h3 class="alert alert-light border rounded text-center shadow_container fw-bold">Information</h3>
+        <small class="fs-5">
+            BundeliCrafts.com पर, हम गर्व के साथ कुशल शिल्पकारों और ग्राहकों के बीच एक सेतु के रूप में कार्य करते हैं, जो बुंदेली शिल्प की समृद्ध विरासत को आपके दरवाजे तक पहुंचाते हैं। हमारा प्लेटफ़ॉर्म आपको सीधे इन प्रतिभाशाली शिल्पकारों से जोड़ता है, जिससे हर उत्पाद उनकी कला और परंपरा का अनूठा प्रतीक बनता है। चाहे वह जटिल हस्तनिर्मित वस्त्र हों, मिट्टी के बर्तन, सुंदर नक्काशीदार लकड़ी का काम हो, या गहने, हर वस्तु में सांस्कृतिक समृद्धि और शिल्प कौशल की कहानी है। चाहे आप अपने घर में विरासत का स्पर्श जोड़ना चाहें या एक खास उपहार की तलाश में हों, BundeliCrafts.com बुंदेली कला की कालातीत सुंदरता को सरलता से आपके पास लाता है। हमारे साथ प्रामाणिक शिल्पकला का अनुभव करें।
+        </small>  
+    </div>
+</div>
+    <div class="container px-4">
+        <h3 class="alert alert-light border rounded text-center shadow_container fw-bold">Products</h3>
+        <br><br/>
+        <div class="row container">
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/GC">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/GC.jpg' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">General Crafts</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/SB">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/SB.png' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">Scrapbooking</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/PC">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/PC.jpg' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">Paper Crafts</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br><br/>
+        <div class="row container">
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/PD">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/PD.jpg' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">Painting and Drawing</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/FC">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/FC.jpg' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">Fabric Crafts</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" style="animation-duration: 1s; animation-delay:0.6s;">
+                <div class="goodnesssec buttermilk smbg shadow_container">
+                    <a href="/category/NC">
+                        <div class="goodnessseccont text-center">
+                            <img src="{% static 'app/images/NC.jpg' %}" class="img-responsive border rounded" alt="" height="200" width="500">
+                            <h5 class="border rounded text-center shadow_container btn btn-secondary px-4 fw-bold my-2">Needlecraft</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Uncomment the following line if you need to show the login message -->
+        <!-- <h2 class="text-center">Login Required</h2> -->
+    </div> 
+    
+    <br><br/>
+
+    
+{% endblock main-content %}
+
+
+{% block home_foot %}
+<footer class="bg-secondary">
+    <div class="footer">
+        <div class="row">
+            <div class="col">
+                <a class="contact-info" href="#"><i class="fa-solid fa-phone"></i></a>
+                <a class="contact-info" href="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fscalableminds%2Fchatroom"><i class="fa-brands fa-github"></i></a>
+                <a class="contact-info" href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a>
+                <a class="contact-info" href="#"><i class="fa-solid fa-paper-plane"></i></a>
+                <a class="contact-info" href="https://www.linkedin.com/"><i class="fa-brands fa-linkedin"></i></a>
+                <a class="contact-info" href="https://www.google.com/maps"><i class="fa-solid fa-location-dot"></i></a>
+                <a class="contact-info" href="https://www.facebook.com/"><i class="fa-brands fa-facebook"></i></a>
+                <a class="contact-info" href="https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&emr=1&followup=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&ifkv=ARpgrqdKue8RWvc_wAAKfSVgWKafwZoKpdM5A7RGkZOobYohx3EyRGRPoh6nO_HWAoeUUjGhaSL8&osid=1&passive=1209600&service=mail&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-651697534%3A1727145035166207&ddm=1"><i class="fa-solid fa-envelope"></i></a>
+                <a class="contact-info" href="https://x.com/"><i class="fa-brands fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="row">
+            <ul>
+                <li><a href="/about">About us</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/terms-conditions">Terms & Conditions</a></li>
+                <li><a href="/wishlists">Wishlists</a></li>
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/showcart">Cart</a></li>
+            </ul>
+        </div>
+        <div class="bg-white"><br></div>
+    </div>
+</footer>
+{% endblock home_foot %}
