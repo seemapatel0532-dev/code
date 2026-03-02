@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">Dashboard</h3>
+    <div class="text-muted">CareerSetu AI — Phase 5 (Hybrid Resume ↔ JD Match Engine)</div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs" href="{{ url_for('resumes.upload_resume') }}">
+      <i class="bi bi-cloud-arrow-up me-1"></i> Upload Resume
+    </a>
+    <a class="btn btn-cs-outline" href="{{ url_for('jds.jd_new') }}">
+      <i class="bi bi-card-text me-1"></i> Add JD
+    </a>
+    <a class="btn btn-cs-outline" href="{{ url_for('match.select') }}">
+      <i class="bi bi-link-45deg me-1"></i> Match Engine
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-3">
+    <div class="card cs-card cs-hover">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-muted small">My Resumes</div>
+            <div class="fs-3 fw-semibold">{{ resume_count or 0 }}</div>
+            <div class="small text-muted mt-2">Uploaded & parsed</div>
+          </div>
+          <div class="cs-icon"><i class="bi bi-file-earmark-text"></i></div>
+        </div>
+        <div class="progress mt-3" style="height: 8px;">
+          <div class="progress-bar" style="width: {{ 10 if (resume_count or 0) == 0 else 35 }}%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card cs-card cs-hover">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-muted small">My JDs</div>
+            <div class="fs-3 fw-semibold">{{ jd_count or 0 }}</div>
+            <div class="small text-muted mt-2">Saved & structured</div>
+          </div>
+          <div class="cs-icon"><i class="bi bi-card-text"></i></div>
+        </div>
+        <div class="progress mt-3" style="height: 8px;">
+          <div class="progress-bar" style="width: {{ 10 if (jd_count or 0) == 0 else 45 }}%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-2">What Phase 5 adds</h5>
+        <ul class="mb-0 text-muted">
+          <li>Hybrid matching: skill overlap + semantic similarity + role-fit</li>
+          <li>Matched skills (green) + missing skills (red)</li>
+          <li>Critical missing skills highlight</li>
+          <li>Explainable breakdown + copy-to-clipboard suggestions</li>
+          <li>Interactive report: toggle (Skills/Semantic) + category filters</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

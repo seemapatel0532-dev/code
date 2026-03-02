@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">JD Library</h3>
+    <div class="text-muted">Store job descriptions and view structured requirements</div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs" href="{{ url_for('jds.jd_new') }}">
+      <i class="bi bi-plus-circle me-1"></i> Add JD
+    </a>
+  </div>
+</div>
+
+<div class="card cs-card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-8">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <input id="jdSearch" type="text" class="form-control" placeholder="Search by title, role, or skills..." value="{{ q }}">
+        </div>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="text-muted small">
+          {{ (jds|length) }} saved JD(s)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3" id="jdGrid">
+  {% if jds and jds|length > 0 %}
+    {% for jd in jds %}
+      {% set a = jd.analyzed or {} %}
+      {% set role = (a.get("role") or {}).get("role") or "—" %}
+      {% set conf = (a.get("role") or {}).get("confidence") %}
+      {% set skills = (a.get("skills") or {}).get("skills") or [] %}
+      {% set critical = (a.get("skills") or {}).get("critical_skills") or [] %}
+      {% set exp = (a.get("experience") or {}) %}
+      <div class="col-md-6 col-lg-4 jd-card-col">
+        <div class="card cs-card cs-hover jd-card"
+             data-title="{{ jd.title|lower }}"
+             data-role="{{ role|lower }}"
+             data-skills="{{ (' '.join(skills))|lower }}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div>
+                <div class="fw-semibold">{{ jd.title }}</div>
+                <div class="text-muted small">
+                  <i class="bi bi-person-badge me-1"></i> {{ role }}
+                  {% if conf is not none %}
+                    <span class="ms-1">(conf {{ conf }})</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="jd-pill">
+                <i class="bi bi-stars me-1"></i> Structured
+              </div>
+            </div>
+
+            <div class="mt-3 d-flex flex-wrap gap-2">
+              {% if exp.get("min_years") %}
+                <span class="badge bg-primary-subtle text-primary">
+                  <i class="bi bi-briefcase me-1"></i>{{ exp.get("min_years") }}+ yrs
+                </span>
+              {% endif %}
+              <span class="badge bg-secondary-subtle text-secondary">
+                <i class="bi bi-clock me-1"></i>{{ jd.created_at.strftime("%Y-%m-%d") }}
+              </span>
+            </div>
+
+            <div class="mt-3">
+              <div class="text-muted small mb-1">Top Skills</div>
+              <div class="d-flex flex-wrap gap-2">
+                {% for s in skills[:6] %}
+                  <span class="badge jd-skill">{{ s }}</span>
+                {% endfor %}
+                {% if skills|length == 0 %}
+                  <span class="text-muted small">No skills detected</span>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if critical and critical|length > 0 %}
+            <div class="mt-3">
+              <div class="text-muted small mb-1">Critical Skills</div>
+              <div class="d-flex flex-wrap gap-2">
+                {% for s in critical[:6] %}
+                  <span class="badge jd-critical">{{ s }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('jds.jd_detail', jd_id=jd.id) }}">
+                <i class="bi bi-eye me-1"></i> View
+              </a>
+
+              <button class="btn btn-sm btn-outline-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteModal"
+                      data-jd-id="{{ jd.id }}"
+                      data-jd-title="{{ jd.title|e }}">
+                <i class="bi bi-trash3 me-1"></i> Delete
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="card cs-card">
+        <div class="card-body text-center py-5">
+          <div class="display-6 mb-2">📝</div>
+          <h5 class="mb-1">No Job Descriptions yet</h5>
+          <div class="text-muted mb-3">Add your first JD to extract skills and requirements.</div>
+          <a class="btn btn-cs" href="{{ url_for('jds.jd_new') }}">
+            <i class="bi bi-plus-circle me-1"></i> Add JD
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Job Description</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-muted">
+          Are you sure you want to delete:
+          <div class="fw-semibold mt-2" id="deleteTitle">—</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cs-outline" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" method="POST" action="#">
+          <button class="btn btn-danger">
+            <i class="bi bi-trash3 me-1"></i> Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/jd_library.js') }}"></script>
+{% endblock %}

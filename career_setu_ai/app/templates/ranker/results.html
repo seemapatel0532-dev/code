@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h3 class="mb-1">Ranker Results</h3>
+    <div class="text-muted">
+      Run #{{ run.id }} • {{ run.jd_title or 'JD' }}
+      <span class="mx-2">•</span>
+      Weights: Match {{ weights.match }} / ATS {{ weights.ats }}
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs-outline" href="{{ url_for('ranker.index') }}">
+      <i class="bi bi-plus-circle me-1"></i>New Run
+    </a>
+    <a class="btn btn-cs" href="{{ url_for('ranker.export_csv', run_id=run.id) }}">
+      <i class="bi bi-download me-1"></i>Export CSV
+    </a>
+  </div>
+</div>
+
+<div class="card cs-card">
+  <div class="card-body">
+    {% if run.status != "done" %}
+      <div class="alert alert-warning mb-0">
+        This run is not complete yet. Current status: <b>{{ run.status }}</b>
+      </div>
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="rankTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Shortlist</th>
+              <th onclick="sortTable(2)" style="cursor:pointer;">File <i class="bi bi-arrow-down-up"></i></th>
+              <th onclick="sortTable(3)" style="cursor:pointer;">Final <i class="bi bi-arrow-down-up"></i></th>
+              <th onclick="sortTable(4)" style="cursor:pointer;">Match <i class="bi bi-arrow-down-up"></i></th>
+              <th onclick="sortTable(5)" style="cursor:pointer;">ATS <i class="bi bi-arrow-down-up"></i></th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td class="text-muted">{{ loop.index }}</td>
+                <td>
+                  <input class="form-check-input" type="checkbox" onchange="toastShortlist(this, {{ r.resume_id }})">
+                </td>
+                <td>{{ r.file_name }}</td>
+                <td><span class="badge text-bg-primary">{{ r.final_score }}</span></td>
+                <td><span class="badge text-bg-success-subtle border">{{ r.match_score }}</span></td>
+                <td><span class="badge text-bg-warning-subtle border">{{ r.ats_score }}</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#row{{ loop.index }}">
+                    Expand
+                  </button>
+                </td>
+              </tr>
+              <tr class="collapse" id="row{{ loop.index }}">
+                <td colspan="7">
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <div class="fw-semibold mb-1 text-success">Matched skills</div>
+                      <div class="d-flex flex-wrap gap-2">
+                        {% for s in (r.matched_skills or []) %}
+                          <span class="badge rounded-pill text-bg-success">{{ s.name }}</span>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="fw-semibold mb-1 text-danger">Missing skills</div>
+                      <div class="d-flex flex-wrap gap-2">
+                        {% for s in (r.missing_skills or []) %}
+                          <span class="badge rounded-pill text-bg-danger">{{ s.name }}</span>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  function toastShortlist(checkbox, resumeId){
+    if(checkbox.checked){
+      CareerSetu.toast(`Shortlisted ✅ (Resume ID: ${resumeId})`, "success");
+    }else{
+      CareerSetu.toast(`Removed from shortlist (Resume ID: ${resumeId})`, "warning");
+    }
+  }
+
+  let sortAsc = true;
+  function sortTable(colIndex){
+    const table = document.getElementById("rankTable");
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.querySelectorAll("tr")).filter(r => !r.classList.contains("collapse"));
+
+    rows.sort((a,b) => {
+      const av = a.cells[colIndex].innerText.trim();
+      const bv = b.cells[colIndex].innerText.trim();
+      const an = parseFloat(av); const bn = parseFloat(bv);
+
+      // numeric if possible
+      if(!isNaN(an) && !isNaN(bn)){
+        return sortAsc ? (an - bn) : (bn - an);
+      }
+      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+
+    // rebuild with their collapse rows
+    const all = [];
+    rows.forEach(r => {
+      all.push(r);
+      const next = r.nextElementSibling;
+      if(next && next.classList.contains("collapse")) all.push(next);
+    });
+
+    tbody.innerHTML = "";
+    all.forEach(r => tbody.appendChild(r));
+
+    sortAsc = !sortAsc;
+  }
+</script>
+
+{% endblock %}

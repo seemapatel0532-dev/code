@@ -1,0 +1,36 @@
+/* Phase 4: JD module UI */
+
+.jd-pill{
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(20,184,166,.12);
+  color: var(--cs-accent);
+  border: 1px solid rgba(20,184,166,.22);
+  white-space: nowrap;
+}
+
+.jd-skill{
+  background: rgba(30,58,138,.10);
+  color: var(--cs-primary);
+  border: 1px solid rgba(30,58,138,.18);
+  font-weight: 500;
+}
+
+.jd-critical{
+  background: rgba(239,68,68,.12);
+  color: #b91c1c;
+  border: 1px solid rgba(239,68,68,.20);
+  font-weight: 600;
+}
+
+/* hover effects for badges */
+.jd-skill-hover{
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  cursor: default;
+}
+.jd-skill-hover:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15,23,42,.10);
+  filter: saturate(1.05);
+}

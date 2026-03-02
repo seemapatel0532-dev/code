@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/match.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between gap-3 mb-4 flex-wrap">
+  <div>
+    <h3 class="mb-1">Match Report</h3>
+    <div class="text-muted">
+      Resume: <span class="fw-semibold">{{ resume.original_filename }}</span>
+      <span class="mx-2">•</span>
+      JD: <span class="fw-semibold">{{ jd.title }}</span>
+      {% if jd.company %}<span class="text-muted">({{ jd.company }})</span>{% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-cs-outline" href="{{ url_for('match.select') }}">
+      <i class="bi bi-arrow-left me-1"></i> New Match
+    </a>
+    <a class="btn btn-cs" href="{{ url_for('match.api', resume_id=resume.id, jd_id=jd.id) }}" target="_blank">
+      <i class="bi bi-braces me-1"></i> JSON
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card cs-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="text-muted small">Overall match</div>
+            <div class="display-5 fw-semibold">{{ result.match_score }}</div>
+            <div class="text-muted small">out of 100</div>
+          </div>
+          <div class="cs-score-ring" data-score="{{ result.match_score }}">
+            <svg viewBox="0 0 36 36" class="cs-score-svg">
+              <path class="cs-score-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="cs-score-fg" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <text x="18" y="20.35" class="cs-score-text">{{ result.match_score }}</text>
+            </svg>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="text-muted small">Breakdown</div>
+          <span class="badge text-bg-light border">Explainable</span>
+        </div>
+
+        <div class="cs-break">
+          <div class="cs-break-row">
+            <div class="fw-semibold">Skill overlap</div>
+            <div class="text-muted">{{ result.breakdown.skill_overlap.score }}/100</div>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar" style="width: {{ result.breakdown.skill_overlap.score }}%"></div>
+          </div>
+          <div class="small text-muted mt-1">
+            Matched {{ result.breakdown.skill_overlap.overlap }} / {{ result.breakdown.skill_overlap.target }} JD skills
+            {% if result.breakdown.skill_overlap.critical_target %}
+              • Critical matched {{ result.breakdown.skill_overlap.critical_overlap }} / {{ result.breakdown.skill_overlap.critical_target }}
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="cs-break mt-3">
+          <div class="cs-break-row">
+            <div class="fw-semibold">Semantic similarity</div>
+            <div class="text-muted">{{ result.breakdown.semantic_similarity.score }}/100</div>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar" style="width: {{ result.breakdown.semantic_similarity.score }}%"></div>
+          </div>
+          <div class="small text-muted mt-1">Text similarity between your resume and JD language</div>
+        </div>
+
+        <div class="cs-break mt-3">
+          <div class="cs-break-row">
+            <div class="fw-semibold">Role-fit</div>
+            <div class="text-muted">{{ result.breakdown.role_fit.score }}/100</div>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar" style="width: {{ result.breakdown.role_fit.score }}%"></div>
+          </div>
+          <div class="small text-muted mt-1">Role: <span class="fw-semibold">{{ result.breakdown.role_fit.role }}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card cs-card mt-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h6 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Recommendations</h6>
+          <span class="badge text-bg-warning-subtle border">Actionable</span>
+        </div>
+
+        {% for rec in result.recommendations %}
+          <div class="cs-rec">
+            <div class="fw-semibold">{{ rec.title }}</div>
+            <div class="text-muted small">{{ rec.detail }}</div>
+            <div class="d-flex gap-2 mt-2">
+              <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyText('{{ rec.copy|string|e }}')">
+                <i class="bi bi-clipboard me-1"></i>Copy
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card cs-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <h5 class="mb-0"><i class="bi bi-tags me-2"></i>Skills</h5>
+
+          <div class="btn-group" role="group" aria-label="toggle views">
+            <button class="btn btn-sm btn-outline-primary active" type="button" data-view="skills" onclick="setView('skills')">
+              <i class="bi bi-grid me-1"></i>Skills View
+            </button>
+            <button class="btn btn-sm btn-outline-primary" type="button" data-view="semantic" onclick="setView('semantic')">
+              <i class="bi bi-text-paragraph me-1"></i>Semantic View
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-3" id="viewSkills">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+            <div class="text-muted small">Filter by category:</div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('all')">All</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Programming')">Programming</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Frameworks')">Frameworks</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Data')">Data</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Cloud & DevOps')">Cloud & DevOps</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('APIs & Security')">APIs & Security</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Process')">Process</button>
+              <button class="btn btn-sm btn-light border" type="button" onclick="filterCategory('Other')">Other</button>
+            </div>
+          </div>
+
+          {% if result.critical_missing|length > 0 %}
+            <div class="alert alert-danger">
+              <div class="fw-semibold mb-1"><i class="bi bi-exclamation-triangle me-1"></i>Critical missing skills</div>
+              <div class="cs-badges" id="criticalMissing">
+                {% for s in result.critical_missing %}
+                  <span class="badge rounded-pill text-bg-danger cs-skill" data-category="{{ s.category }}">{{ s.name }}</span>
+                {% endfor %}
+              </div>
+              <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-outline-danger" type="button" onclick="copyList('criticalMissing')">
+                  <i class="bi bi-clipboard me-1"></i>Copy critical missing
+                </button>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="cs-panel">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold"><i class="bi bi-check-circle me-1 text-success"></i>Matched skills</div>
+                  <span class="badge text-bg-success-subtle border">{{ result.matched_skills|length }}</span>
+                </div>
+                <div class="cs-badges mt-2" id="matchedSkills">
+                  {% for s in result.matched_skills %}
+                    <span class="badge rounded-pill text-bg-success cs-skill" data-category="{{ s.category }}">{{ s.name }}</span>
+                  {% endfor %}
+                </div>
+                <div class="d-flex gap-2 mt-2">
+                  <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyList('matchedSkills')">
+                    <i class="bi bi-clipboard me-1"></i>Copy matched
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="cs-panel">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold"><i class="bi bi-x-circle me-1 text-danger"></i>Missing skills</div>
+                  <span class="badge text-bg-danger-subtle border">{{ result.missing_skills|length }}</span>
+                </div>
+                <div class="cs-badges mt-2" id="missingSkills">
+                  {% for s in result.missing_skills %}
+                    <span class="badge rounded-pill text-bg-danger cs-skill" data-category="{{ s.category }}">{{ s.name }}</span>
+                  {% endfor %}
+                </div>
+                <div class="d-flex gap-2 mt-2">
+                  <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyList('missingSkills')">
+                    <i class="bi bi-clipboard me-1"></i>Copy missing
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-light border mt-3 mb-0">
+            <div class="small text-muted">
+              <span class="fw-semibold">Rule:</span> only add missing skills if you can defend them in interview.
+              Also add proof via bullets in Projects/Experience.
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3 d-none" id="viewSemantic">
+          <div class="alert alert-info">
+            <div class="fw-semibold mb-1">Semantic View (explainable)</div>
+            <div class="small text-muted">This score compares the overall wording of your resume vs the JD.
+              Improve it by rewriting bullets using JD keywords and role language.</div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="cs-panel">
+                <div class="fw-semibold mb-2">Resume (sample)</div>
+                <pre class="cs-pre">{{ (resume.parsed.clean_text or '')[:1200] }}</pre>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="cs-panel">
+                <div class="fw-semibold mb-2">Job Description (sample)</div>
+                <pre class="cs-pre">{{ (jd.raw_text or '')[:1200] }}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 mt-3">
+            <div class="card-body px-0">
+              <div class="fw-semibold mb-2">Copy-ready bullet template</div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyText('• Built/Developed X using Y, improving Z by N% (or saving N hours/week).')">
+                  <i class="bi bi-clipboard me-1"></i>Copy template
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      CareerSetu.toast('Copied ✅', 'success');
+    }).catch(() => {
+      CareerSetu.toast('Copy failed (browser blocked clipboard).', 'warning');
+    });
+  }
+
+  function copyList(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const items = Array.from(el.querySelectorAll('.cs-skill')).map(x => x.textContent.trim()).filter(Boolean);
+    copyText(items.join(', '));
+  }
+
+  function setView(name) {
+    const skills = document.getElementById('viewSkills');
+    const semantic = document.getElementById('viewSemantic');
+
+    if (name === 'semantic') {
+      skills.classList.add('d-none');
+      semantic.classList.remove('d-none');
+    } else {
+      semantic.classList.add('d-none');
+      skills.classList.remove('d-none');
+    }
+
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-view') === name);
+    });
+  }
+
+  function filterCategory(category) {
+    document.querySelectorAll('.cs-skill').forEach(b => {
+      const c = b.getAttribute('data-category') || 'Other';
+      const show = (category === 'all') || (c === category);
+      b.classList.toggle('d-none', !show);
+    });
+  }
+
+  // Animated score ring
+  (function initScoreRing(){
+    const ring = document.querySelector('.cs-score-ring');
+    if (!ring) return;
+    const score = parseInt(ring.getAttribute('data-score') || '0', 10);
+    const path = ring.querySelector('.cs-score-fg');
+    if (!path) return;
+
+    const pct = Math.max(0, Math.min(100, score));
+    path.style.strokeDasharray = `0, 100`;
+    setTimeout(() => {
+      path.style.strokeDasharray = `${pct}, 100`;
+    }, 120);
+  })();
+</script>
+{% endblock %}

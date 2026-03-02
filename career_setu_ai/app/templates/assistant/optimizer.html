@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h3 class="mb-1">Optimizer</h3>
+    <div class="text-muted">Rewrite bullets (STAR), generate summary, ATS fixes, and skill-gap roadmap.</div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs-outline" href="{{ url_for('builder.index') }}">
+      <i class="bi bi-pencil-square me-1"></i>Builder
+    </a>
+    <a class="btn btn-cs" href="{{ url_for('builder.view') }}" target="_blank">
+      <i class="bi bi-eye me-1"></i>Preview
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-stars me-2"></i>Bullet Rewriter (STAR)</h5>
+
+        <label class="form-label">Select bullet</label>
+        <select id="bulletSelect" class="form-select">
+          <option value="">-- Select --</option>
+          {% for b in bullets %}
+            <option value="{{ b.id|e }}" data-text="{{ b.text|e }}">{{ b.label }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="mt-3">
+          <label class="form-label">Job Description (optional)</label>
+          <textarea id="jdText" class="form-control" rows="6" placeholder="Paste JD here to get better keyword-aligned rewrites..."></textarea>
+        </div>
+
+        <div class="mt-3">
+          <label class="form-label">Before</label>
+          <textarea id="beforeText" class="form-control" rows="4" placeholder="Select a bullet to load..."></textarea>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-cs w-100" id="btnRewrite">
+            <i class="bi bi-magic me-2"></i>Generate Rewrites
+          </button>
+          <button class="btn btn-cs-outline" id="btnClear">Clear</button>
+        </div>
+
+        <div class="mt-3">
+          <div class="small text-muted">Tip: click a suggestion → it becomes “After”. Then click Apply.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card cs-card mt-3">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-check2-circle me-2"></i>Apply</h5>
+
+        <div class="row g-2">
+          <div class="col-12">
+            <label class="form-label">After</label>
+            <textarea id="afterText" class="form-control" rows="5" placeholder="Pick a rewrite suggestion..."></textarea>
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button class="btn btn-cs w-100" id="btnApply">
+              <i class="bi bi-check2 me-2"></i>Apply to Resume
+            </button>
+            <a class="btn btn-cs-outline" href="{{ url_for('builder.index') }}">
+              Edit
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-3" id="applyMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card cs-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <h5 class="mb-0"><i class="bi bi-columns-gap me-2"></i>Before / After + Suggestions</h5>
+          <button class="btn btn-sm btn-cs-outline" id="btnRegenerate">
+            <i class="bi bi-arrow-clockwise me-1"></i>Regenerate
+          </button>
+        </div>
+
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <div class="text-muted small mb-1">Before</div>
+            <div class="cs-section-box" id="beforeBox">Select a bullet…</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small mb-1">After</div>
+            <div class="cs-section-box" id="afterBox">Pick a suggestion…</div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <h5 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Rewrite Suggestions</h5>
+          <span class="badge text-bg-light border">STAR format</span>
+        </div>
+
+        <div id="suggestions" class="mt-3"></div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-0">
+      <div class="col-md-6">
+        <div class="card cs-card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <h5 class="mb-0"><i class="bi bi-person-vcard me-2"></i>Summary Generator</h5>
+              <button class="btn btn-sm btn-cs-outline" id="btnSummary">Generate</button>
+            </div>
+            <textarea id="summaryOut" class="form-control mt-3" rows="5" placeholder="Generated summary will appear here..."></textarea>
+            <div class="small text-muted mt-2">Copy this into Builder → Summary.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card cs-card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <h5 class="mb-0"><i class="bi bi-shield-check me-2"></i>ATS Fix Suggestions</h5>
+              <button class="btn btn-sm btn-cs-outline" id="btnAts">Analyze</button>
+            </div>
+            <div id="atsOut" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card cs-card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <h5 class="mb-0"><i class="bi bi-map me-2"></i>Skill Gap Roadmap</h5>
+              <button class="btn btn-sm btn-cs-outline" id="btnRoadmap">Generate</button>
+            </div>
+            <div id="roadmapOut" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}

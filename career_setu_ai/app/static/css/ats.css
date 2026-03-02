@@ -1,0 +1,95 @@
+/* Phase 3 ATS styles */
+
+.ats-circle-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ats-circle{
+  position:relative;
+  width: 240px;
+  height: 240px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ats-svg{
+  width: 220px;
+  height: 220px;
+  transform: rotate(-90deg);
+}
+
+.ats-bg{
+  fill: none;
+  stroke: rgba(100,116,139,.18);
+  stroke-width: 12;
+}
+
+.ats-fg{
+  fill:none;
+  stroke: var(--cs-accent, #2563eb);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 900ms ease;
+}
+
+.ats-center{
+  position:absolute;
+  text-align:center;
+}
+
+.ats-score{
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--cs-primary, #0f172a);
+}
+
+.ats-sub{
+  font-size: 13px;
+}
+
+.ats-break-card{
+  border: 1px solid rgba(100,116,139,.18);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: #fff;
+}
+
+.ats-break-head{
+  width:100%;
+  text-align:left;
+  border:0;
+  background:#fff;
+  padding: 14px 14px 12px 14px;
+}
+
+.ats-break-body{
+  padding: 0 14px 14px 14px;
+}
+
+.cs-sev{
+  font-size: 11px;
+  padding: 6px 8px;
+}
+
+.cs-sev-high{
+  background: rgba(239,68,68,.12);
+  color: #b91c1c;
+}
+
+.cs-sev-medium{
+  background: rgba(245,158,11,.14);
+  color: #92400e;
+}
+
+.cs-sev-low{
+  background: rgba(59,130,246,.12);
+  color: #1d4ed8;
+}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">Match Engine</h3>
+    <div class="text-muted">Phase 5 — Bridge your resume and a job description with explainable insights</div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-link-45deg me-2"></i>Select Resume + JD</h5>
+
+        <form method="POST" onsubmit="CareerSetu.showLoader('Generating match report…')">
+          <div class="mb-3">
+            <label class="form-label">Choose Resume</label>
+            <select class="form-select" name="resume_id" required>
+              <option value="" selected disabled>— Select Resume —</option>
+              {% for r in resumes %}
+                <option value="{{ r.id }}">#{{ r.id }} • {{ r.original_filename }} • {{ r.uploaded_at.strftime('%d %b %Y %H:%M') }}</option>
+              {% endfor %}
+            </select>
+            {% if resumes|length == 0 %}
+              <div class="small text-muted mt-2">No resumes found. Upload one first.</div>
+              <a class="btn btn-cs-outline btn-sm mt-2" href="{{ url_for('resumes.upload_resume') }}">
+                <i class="bi bi-cloud-arrow-up me-1"></i> Upload Resume
+              </a>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Choose Job Description</label>
+            <select class="form-select" name="jd_id" required>
+              <option value="" selected disabled>— Select Job Description —</option>
+              {% for j in jds %}
+                <option value="{{ j.id }}">#{{ j.id }} • {{ j.title }}{% if j.company %} • {{ j.company }}{% endif %}{% if j.location %} • {{ j.location }}{% endif %}</option>
+              {% endfor %}
+            </select>
+            {% if jds|length == 0 %}
+              <div class="small text-muted mt-2">No job descriptions found. Add one first.</div>
+              <a class="btn btn-cs-outline btn-sm mt-2" href="{{ url_for('jds.jd_new') }}">
+                <i class="bi bi-card-text me-1"></i> Add Job Description
+              </a>
+            {% endif %}
+          </div>
+
+          <button class="btn btn-cs w-100" {% if resumes|length==0 or jds|length==0 %}disabled{% endif %}>
+            <i class="bi bi-magic me-2"></i>Generate Match Report
+          </button>
+        </form>
+
+        <div class="alert alert-info mt-3 mb-0">
+          <div class="fw-semibold mb-1">How the score is calculated</div>
+          <div class="small">
+            • Skill overlap (weighted for critical skills) • Semantic similarity (TF-IDF) • Role-fit hints<br>
+            Score is explainable — you will see matched skills, missing skills, and improvement suggestions.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-2"><i class="bi bi-check2-circle me-2"></i>What you get</h5>
+        <ul class="text-muted mb-0">
+          <li>Overall match score (0–100)</li>
+          <li>Matched skills (green badges)</li>
+          <li>Missing skills (red badges)</li>
+          <li>Critical missing skills (highlighted)</li>
+          <li>Actionable recommendations + copy buttons</li>
+          <li>Toggle views: Skills / Semantic (inside report)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card cs-card mt-3">
+      <div class="card-body">
+        <h6 class="mb-2">Tip</h6>
+        <div class="text-muted small">Only add skills you truly know. For each missing skill you add, also add proof inside Projects/Experience bullets.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">{{ jd.title }}</h3>
+    <div class="text-muted">
+      {% set role = (analyzed.get("role") or {}).get("role") %}
+      <i class="bi bi-person-badge me-1"></i>{{ role or "—" }}
+      <span class="mx-2">•</span>
+      <i class="bi bi-clock me-1"></i>{{ jd.created_at.strftime("%Y-%m-%d %H:%M") }}
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs-outline" href="{{ url_for('jds.jd_library') }}">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+    <form method="POST" action="{{ url_for('jds.jd_delete', jd_id=jd.id) }}"
+          onsubmit="return confirm('Delete this JD?')">
+      <button class="btn btn-outline-danger">
+        <i class="bi bi-trash3 me-1"></i> Delete
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-2">Extracted Requirements</h5>
+
+        {% set exp = analyzed.get("experience") or {} %}
+        {% if exp.get("min_years") %}
+          <div class="mb-3">
+            <span class="badge bg-primary-subtle text-primary">
+              <i class="bi bi-briefcase me-1"></i>
+              Experience: {{ exp.get("min_years") }}+ years
+            </span>
+          </div>
+        {% endif %}
+
+        {% set sk = analyzed.get("skills") or {} %}
+        {% set skills = sk.get("skills") or [] %}
+        {% set critical = sk.get("critical_skills") or [] %}
+
+        <div class="mb-3">
+          <div class="text-muted small mb-2">Skills</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for s in skills %}
+              <span class="badge jd-skill jd-skill-hover">{{ s }}</span>
+            {% endfor %}
+            {% if skills|length == 0 %}
+              <div class="text-muted small">No skills detected</div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if critical and critical|length > 0 %}
+        <div class="mb-3">
+          <div class="text-muted small mb-2">Critical Skills (from required/must-have lines)</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for s in critical %}
+              <span class="badge jd-critical jd-skill-hover">{{ s }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+          <h6 class="mb-2">Role Identification</h6>
+          {% set roleObj = analyzed.get("role") or {} %}
+          <div class="text-muted">
+            Role: <span class="fw-semibold">{{ roleObj.get("role") or "—" }}</span>
+            <span class="mx-2">•</span>
+            Confidence: <span class="fw-semibold">{{ roleObj.get("confidence") }}</span>
+            <span class="mx-2">•</span>
+            Method: <span class="fw-semibold">{{ roleObj.get("method") }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-2">Original JD Text</h5>
+        <div class="text-muted small mb-2">
+          This is the exact text you saved.
+        </div>
+        <pre class="cs-pre">{{ jd.raw_text }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

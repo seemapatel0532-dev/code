@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">Add Job Description</h3>
+    <div class="text-muted">Paste JD text → we extract skills, experience, and role</div>
+  </div>
+
+  <a class="btn btn-cs-outline" href="{{ url_for('jds.jd_library') }}">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
+</div>
+
+<div class="card cs-card">
+  <div class="card-body">
+    <form method="POST" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Title</label>
+          <input type="text" name="title" class="form-control" placeholder="e.g., Backend Developer (Python/Flask)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Company (optional)</label>
+          <input type="text" name="company" class="form-control" placeholder="e.g., ABC Pvt Ltd">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Location (optional)</label>
+          <input type="text" name="location" class="form-control" placeholder="e.g., Remote / Delhi / Pune">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold">Job Description Text</label>
+          <textarea name="raw_text" class="form-control" rows="12" required
+                    placeholder="Paste the full JD here..."></textarea>
+          <div class="invalid-feedback">JD text is required.</div>
+          <div class="text-muted small mt-2">
+            Tip: Include “Requirements / Must have / Skills / Experience” sections for best extraction.
+          </div>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-cs">
+            <i class="bi bi-stars me-1"></i> Save & Analyze
+          </button>
+          <a class="btn btn-cs-outline" href="{{ url_for('jds.jd_library') }}">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

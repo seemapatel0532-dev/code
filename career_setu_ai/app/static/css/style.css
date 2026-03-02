@@ -1,0 +1,211 @@
+:root{
+  --cs-primary:#1E3A8A;
+  --cs-accent:#14B8A6;
+  --cs-bg:#F3F4F6;
+  --cs-card:#ffffff;
+  --cs-text:#0f172a;
+  --cs-muted:#64748b;
+}
+
+body{
+  font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--cs-bg);
+  color: var(--cs-text);
+}
+
+/* cards/buttons */
+.cs-card{
+  border:0;
+  border-radius:16px;
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+}
+
+.cs-hover{
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.cs-hover:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(15,23,42,.10);
+}
+
+.btn-cs{
+  background: var(--cs-primary);
+  color:#fff;
+  border-radius:12px;
+  border:0;
+}
+.btn-cs:hover{ background:#17327a; color:#fff; }
+
+.btn-cs-outline{
+  background: transparent;
+  color: var(--cs-primary);
+  border-radius: 12px;
+  border: 1px solid rgba(30,58,138,.25);
+}
+.btn-cs-outline:hover{
+  background: rgba(30,58,138,.08);
+}
+
+.progress{
+  border-radius: 999px;
+  background: rgba(100,116,139,.15);
+}
+.progress-bar{
+  background: linear-gradient(90deg, var(--cs-primary), var(--cs-accent));
+}
+
+/* small brand badge used in auth pages */
+.brand-badge{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius: 14px;
+  background: rgba(30,58,138,.10);
+  color: var(--cs-primary);
+  font-size: 20px;
+}
+
+/* dropzone */
+.cs-dropzone{
+  border: 2px dashed rgba(30,58,138,.25);
+  border-radius: 18px;
+  background: rgba(255,255,255,.6);
+  padding: 22px;
+  cursor: pointer;
+  transition: .15s ease;
+}
+.cs-dropzone:hover{
+  border-color: rgba(20,184,166,.55);
+  background: rgba(20,184,166,.06);
+}
+.cs-dropzone.dragover{
+  border-color: rgba(20,184,166,.9);
+  background: rgba(20,184,166,.10);
+  transform: scale(1.01);
+}
+.cs-dropzone-inner{
+  text-align:center;
+}
+.cs-drop-icon{
+  width:56px;
+  height:56px;
+  border-radius: 18px;
+  display:grid;
+  place-items:center;
+  margin: 0 auto 12px auto;
+  background: rgba(20,184,166,.12);
+  color: var(--cs-accent);
+  font-size: 22px;
+}
+
+/* section render boxes */
+.cs-section-box{
+  white-space: pre-wrap;
+  background: #fff;
+  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 180px;
+}
+
+.cs-pre{
+  white-space: pre-wrap;
+  background: #fff;
+  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 14px;
+  padding: 14px;
+  margin: 0;
+}
+
+/* chips */
+.cs-chip{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15,23,42,.08);
+  background: rgba(255,255,255,.7);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+/* loader overlay */
+.cs-loader{
+  position: fixed;
+  inset: 0;
+  background: rgba(243,244,246,.75);
+  backdrop-filter: blur(4px);
+  display:grid;
+  place-items:center;
+  z-index: 2000;
+}
+.cs-loader-card{
+  width: 280px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  text-align:center;
+  box-shadow: 0 20px 60px rgba(15,23,42,.18);
+}
+
+/* =========================
+   Interactive Resume View
+   ========================= */
+.cs-resume-shell{
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(15,23,42,.08);
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+  overflow: hidden;
+}
+
+.cs-resume-header{
+  padding: 18px 18px 14px 18px;
+  border-bottom: 1px solid rgba(15,23,42,.08);
+  background: linear-gradient(180deg, rgba(30,58,138,.07), rgba(255,255,255,1));
+}
+
+.cs-name{
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.cs-meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+  color: var(--cs-muted);
+  font-size: 13px;
+}
+
+.cs-meta span{ display: inline-flex; gap: 8px; align-items: center; }
+
+.cs-summary{
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.cs-card2{
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15,23,42,.08);
+  padding: 14px;
+}
+
+.cs-sec-title{
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+@media print{
+  body{ background: #fff !important; }
+  nav, .toast-container, #csLoader, .btn, .navbar, .sticky-top{ display: none !important; }
+  main.container{ padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+  .cs-resume-shell{ box-shadow: none !important; border: 0 !important; }
+  .accordion-button{ box-shadow: none !important; }
+}

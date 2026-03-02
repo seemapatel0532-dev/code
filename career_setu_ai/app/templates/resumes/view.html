@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4">
+  <div>
+    <h3 class="mb-1">Resume Analysis</h3>
+    <div class="text-muted">{{ resume.original_filename }}</div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs-outline" href="{{ url_for('resumes.list_resumes') }}">
+      <i class="bi bi-arrow-left me-1"></i> Library
+    </a>
+
+    <a class="btn btn-cs-outline" href="{{ url_for('scoring.ats_report_page', resume_id=resume.id) }}">
+      <i class="bi bi-graph-up-arrow me-1"></i> ATS Score
+    </a>
+
+    <a class="btn btn-cs-outline" href="{{ url_for('builder.import_from_resume', resume_id=resume.id) }}">
+      <i class="bi bi-magic me-1"></i> Generate AI Resume
+    </a>
+
+    <a class="btn btn-cs" href="{{ url_for('resumes.download_resume_file', resume_id=resume.id) }}">
+      <i class="bi bi-download me-1"></i> Download
+    </a>
+  </div>
+</div>
+
+{% set entities = parsed.get("entities", {}) %}
+{% set sections = parsed.get("sections", {}) %}
+{% set quality = parsed.get("quality", {}) %}
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card cs-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h5 class="mb-0">Extracted Sections</h5>
+          <span class="badge {{ quality.get('class', 'bg-secondary-subtle text-secondary') }}">
+            Parsing: {{ quality.get('label','--') }}
+          </span>
+        </div>
+
+        <ul class="nav nav-pills mt-3" id="sectionTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-experience" type="button">Experience</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-skills" type="button">Skills</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-education" type="button">Education</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-projects" type="button">Projects</button>
+          </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="tab-experience">
+            <div class="cs-section-box">{{ sections.get("experience","") or "No experience section detected." }}</div>
+          </div>
+          <div class="tab-pane fade" id="tab-skills">
+            <div class="cs-section-box">{{ sections.get("skills","") or "No skills section detected." }}</div>
+          </div>
+          <div class="tab-pane fade" id="tab-education">
+            <div class="cs-section-box">{{ sections.get("education","") or "No education section detected." }}</div>
+          </div>
+          <div class="tab-pane fade" id="tab-projects">
+            <div class="cs-section-box">{{ sections.get("projects","") or "No projects section detected." }}</div>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <a class="btn btn-sm btn-cs-outline" href="{{ url_for('scoring.ats_report_page', resume_id=resume.id) }}">
+            <i class="bi bi-graph-up-arrow me-1"></i> Generate ATS Score Report
+          </a>
+        </div>
+
+        <div class="accordion mt-4" id="rawTextAcc">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rawText">
+                View full extracted text (debug)
+              </button>
+            </h2>
+            <div id="rawText" class="accordion-collapse collapse" data-bs-parent="#rawTextAcc">
+              <div class="accordion-body">
+                <pre class="cs-pre">{{ parsed.get("clean_text","") }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-3">Extracted Info</h5>
+
+        <div class="mb-3">
+          <div class="text-muted small mb-1">Emails</div>
+          {% if entities.get("emails") %}
+            {% for e in entities.get("emails") %}
+              <div class="cs-chip"><i class="bi bi-envelope me-2"></i>{{ e }}</div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted small">Not found</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <div class="text-muted small mb-1">Phones</div>
+          {% if entities.get("phones") %}
+            {% for p in entities.get("phones") %}
+              <div class="cs-chip"><i class="bi bi-telephone me-2"></i>{{ p }}</div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted small">Not found</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <div class="text-muted small mb-1">Links</div>
+          {% if entities.get("urls") %}
+            {% for u in entities.get("urls")[:6] %}
+              <a class="cs-chip text-decoration-none" href="{{ u if u.startswith('http') else 'https://' ~ u }}" target="_blank">
+                <i class="bi bi-link-45deg me-2"></i>{{ u }}
+              </a>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted small">Not found</div>
+          {% endif %}
+        </div>
+
+        <hr>
+
+        <div class="text-muted small">
+          File: {{ resume.file_ext|upper }} • {{ (resume.file_size/1024)|round(1) }} KB
+          <br>
+          Uploaded: {{ resume.uploaded_at.strftime("%Y-%m-%d %H:%M") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

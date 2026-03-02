@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5 col-lg-4">
+    <div class="card cs-card">
+      <div class="card-body p-4">
+        <div class="text-center mb-3">
+          <div class="brand-badge mx-auto mb-2"><i class="bi bi-bridge"></i></div>
+          <h4 class="mb-0">Login</h4>
+          <div class="text-muted">Access your CareerSetu AI dashboard</div>
+        </div>
+
+        <form method="POST" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" name="email" type="email" required>
+            <div class="invalid-feedback">Enter a valid email.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" name="password" type="password" minlength="4" required>
+            <div class="invalid-feedback">Password is required.</div>
+          </div>
+
+          <button class="btn btn-cs w-100">Login</button>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="{{ url_for('auth.signup') }}">Create new account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

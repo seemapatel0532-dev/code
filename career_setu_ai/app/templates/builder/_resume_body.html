@@ -1,0 +1,122 @@
+<div class="cs-resume-shell">
+  <div class="cs-resume-header">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+      <div>
+        <div class="cs-name">{{ personal.get('name') or 'Your Name' }}</div>
+        <div class="cs-meta">
+          {% if personal.get('email') %}<span><i class="bi bi-envelope"></i> {{ personal.get('email') }}</span>{% endif %}
+          {% if personal.get('phone') %}<span><i class="bi bi-telephone"></i> {{ personal.get('phone') }}</span>{% endif %}
+          {% if personal.get('links') %}<span><i class="bi bi-link-45deg"></i> {{ personal.get('links') }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="d-none d-md-block">
+        <span class="badge text-bg-light border">ATS-Friendly</span>
+        <span class="badge text-bg-light border">Interactive</span>
+      </div>
+    </div>
+
+    {% if p.get('summary') %}
+      <div class="cs-summary mt-3">{{ p.get('summary') }}</div>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 mt-0">
+    <div class="col-lg-4">
+      <div class="cs-card2">
+        <div class="cs-sec-title"><i class="bi bi-lightning-charge me-2"></i>Skills</div>
+        {% if skills and skills|length > 0 %}
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            {% for s in skills %}
+              <span class="badge rounded-pill text-bg-light border">{{ s }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted small mt-2">Add skills in Builder.</div>
+        {% endif %}
+      </div>
+
+      <div class="cs-card2 mt-3">
+        <div class="cs-sec-title"><i class="bi bi-mortarboard me-2"></i>Education</div>
+        {% if edu and edu|length > 0 %}
+          <div class="mt-2">
+            {% for e in edu %}
+              <div class="mb-3">
+                <div class="fw-semibold">{{ e.get('degree') or 'Degree' }}</div>
+                <div class="text-muted small">{{ e.get('institution') or '' }}</div>
+                {% if e.get('year') %}<div class="text-muted small">{{ e.get('year') }}</div>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted small mt-2">Add education details in Builder.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="cs-card2">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="cs-sec-title"><i class="bi bi-kanban me-2"></i>Projects</div>
+          <div class="text-muted small">Click to expand</div>
+        </div>
+
+        {% if projects and projects|length > 0 %}
+          <div class="accordion mt-2" id="projAcc">
+            {% for pr in projects %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="h{{ loop.index }}">
+                  <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#c{{ loop.index }}">
+                    <div class="w-100 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                      <div class="fw-semibold">{{ pr.get('name') or 'Project' }}</div>
+                      {% if pr.get('tech') %}<span class="badge text-bg-light border">{{ pr.get('tech') }}</span>{% endif %}
+                    </div>
+                  </button>
+                </h2>
+                <div id="c{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#projAcc">
+                  <div class="accordion-body">
+                    {% set bl = pr.get('bullets') or [] %}
+                    {% if bl and bl|length > 0 %}
+                      <ul class="mb-0">
+                        {% for b in bl %}
+                          <li>{{ b }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <div class="text-muted small">Add bullets in Builder.</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted small mt-2">Add projects in Builder.</div>
+        {% endif %}
+      </div>
+
+      <div class="cs-card2 mt-3">
+        <div class="cs-sec-title"><i class="bi bi-briefcase me-2"></i>Experience</div>
+        {% if exp and exp|length > 0 %}
+          <div class="mt-2">
+            {% for x in exp %}
+              <div class="mb-3">
+                <div class="fw-semibold">{{ x.get('role') or '' }}{% if x.get('company') %} • {{ x.get('company') }}{% endif %}</div>
+                {% if x.get('duration') %}<div class="text-muted small">{{ x.get('duration') }}</div>{% endif %}
+                {% set bl = x.get('bullets') or [] %}
+                {% if bl and bl|length > 0 %}
+                  <ul class="mb-0 mt-2">
+                    {% for b in bl %}
+                      <li>{{ b }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted small mt-2">If you are a fresher, keep this empty or add internships/training.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2">
+  <div>
+    <h3 class="mb-1">Resume Builder</h3>
+    <div class="text-muted">AI-structured profile → interactive preview → export PDF/DOCX → version history</div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-cs-outline" href="{{ url_for('builder.view') }}" target="_blank">
+      <i class="bi bi-eye me-1"></i>Interactive Preview
+    </a>
+    <a class="btn btn-cs-outline" href="{{ url_for('builder.export_pdf') }}">
+      <i class="bi bi-filetype-pdf me-1"></i>Export PDF
+    </a>
+    <a class="btn btn-cs" href="{{ url_for('builder.export_docx') }}">
+      <i class="bi bi-filetype-docx me-1"></i>Export DOCX
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-pencil-square me-2"></i>Editor</h5>
+
+        <form method="POST">
+          <div class="border rounded p-3 mb-3">
+            <h6 class="mb-2">Personal</h6>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" name="name" value="{{ (profile.profile_json.personal.name if profile.profile_json and profile.profile_json.personal else '') }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input class="form-control" name="email" value="{{ (profile.profile_json.personal.email if profile.profile_json and profile.profile_json.personal else '') }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input class="form-control" name="phone" value="{{ (profile.profile_json.personal.phone if profile.profile_json and profile.profile_json.personal else '') }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Links (LinkedIn/GitHub)</label>
+                <input class="form-control" name="links" value="{{ (profile.profile_json.personal.links if profile.profile_json and profile.profile_json.personal else '') }}">
+              </div>
+            </div>
+          </div>
+
+          <div class="border rounded p-3 mb-3">
+            <h6 class="mb-2">Summary</h6>
+            <textarea class="form-control" rows="4" name="summary">{{ profile.profile_json.summary if profile.profile_json else '' }}</textarea>
+          </div>
+
+          <div class="border rounded p-3 mb-3">
+            <h6 class="mb-2">Skills (comma separated)</h6>
+            <input class="form-control" name="skills" value="{{ (profile.profile_json.skills|join(', ') if profile.profile_json and profile.profile_json.skills else '') }}">
+          </div>
+
+          <div class="border rounded p-3 mb-3" id="eduWrap">
+            <div class="d-flex align-items-center justify-content-between">
+              <h6 class="mb-2">Education</h6>
+              <button class="btn btn-sm btn-outline-secondary" type="button" onclick="addEdu()">+ Add</button>
+            </div>
+
+            {% set edu = profile.profile_json.education if profile.profile_json and profile.profile_json.education else [] %}
+            {% for e in edu %}
+              <div class="row g-2 mb-2 eduRow">
+                <div class="col-md-4"><input class="form-control" name="edu_degree" placeholder="Degree" value="{{ e.degree }}"></div>
+                <div class="col-md-5"><input class="form-control" name="edu_inst" placeholder="Institution" value="{{ e.institution }}"></div>
+                <div class="col-md-2"><input class="form-control" name="edu_year" placeholder="Year" value="{{ e.year }}"></div>
+                <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.eduRow').remove()">x</button></div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="border rounded p-3 mb-3" id="expWrap">
+            <div class="d-flex align-items-center justify-content-between">
+              <h6 class="mb-2">Experience</h6>
+              <button class="btn btn-sm btn-outline-secondary" type="button" onclick="addExp()">+ Add</button>
+            </div>
+
+            {% set exp = profile.profile_json.experience if profile.profile_json and profile.profile_json.experience else [] %}
+            {% for x in exp %}
+              <div class="border rounded p-2 mb-2 expRow">
+                <div class="row g-2">
+                  <div class="col-md-4"><input class="form-control" name="exp_role" placeholder="Role" value="{{ x.role }}"></div>
+                  <div class="col-md-4"><input class="form-control" name="exp_company" placeholder="Company" value="{{ x.company }}"></div>
+                  <div class="col-md-3"><input class="form-control" name="exp_duration" placeholder="Duration" value="{{ x.duration }}"></div>
+                  <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.expRow').remove()">x</button></div>
+                </div>
+                <label class="form-label mt-2 mb-1 small text-muted">Bullets (one per line)</label>
+                <textarea class="form-control" rows="4" name="exp_bullets">{% for b in x.bullets %}{{ b }}{% if not loop.last %}&#10;{% endif %}{% endfor %}</textarea>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="border rounded p-3 mb-3" id="projWrap">
+            <div class="d-flex align-items-center justify-content-between">
+              <h6 class="mb-2">Projects</h6>
+              <button class="btn btn-sm btn-outline-secondary" type="button" onclick="addProj()">+ Add</button>
+            </div>
+
+            {% set proj = profile.profile_json.projects if profile.profile_json and profile.profile_json.projects else [] %}
+            {% for p in proj %}
+              <div class="border rounded p-2 mb-2 projRow">
+                <div class="row g-2">
+                  <div class="col-md-5"><input class="form-control" name="proj_name" placeholder="Project name" value="{{ p.name }}"></div>
+                  <div class="col-md-6"><input class="form-control" name="proj_tech" placeholder="Tech (Python, Flask...)" value="{{ p.tech }}"></div>
+                  <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.projRow').remove()">x</button></div>
+                </div>
+                <label class="form-label mt-2 mb-1 small text-muted">Bullets (one per line)</label>
+                <textarea class="form-control" rows="4" name="proj_bullets">{% for b in p.bullets %}{{ b }}{% if not loop.last %}&#10;{% endif %}{% endfor %}</textarea>
+              </div>
+            {% endfor %}
+          </div>
+
+          <button class="btn btn-cs w-100">
+            <i class="bi bi-save me-2"></i>Save Profile + Create Version
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card cs-card mb-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div>
+            <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Live Preview</h5>
+            <div class="small text-muted">This preview updates after you save.</div>
+          </div>
+          <a class="btn btn-sm btn-cs-outline" href="{{ url_for('builder.view') }}" target="_blank">
+            <i class="bi bi-box-arrow-up-right me-1"></i>Open
+          </a>
+        </div>
+        <div class="mt-3 cs-preview-frame">
+          <iframe
+            title="Resume Preview"
+            src="{{ url_for('builder.view') }}?embed=1"
+            class="w-100"
+            style="height: 520px; border: 1px solid rgba(15,23,42,.10); border-radius: 14px;"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="card cs-card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-clock-history me-2"></i>Version History</h5>
+
+        {% if versions|length == 0 %}
+          <div class="text-muted">No versions yet.</div>
+        {% else %}
+          <ul class="list-group">
+            {% for v in versions %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-semibold">{{ v.label or "Snapshot" }}</div>
+                  <div class="small text-muted">{{ v.created_at.strftime('%d %b %Y %H:%M') }}</div>
+                </div>
+                <span class="badge text-bg-light border">v{{ loop.index }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card cs-card mt-3">
+      <div class="card-body">
+        <h6 class="mb-2">Export Notes</h6>
+        <div class="small text-muted">
+          PDF export is a clean single-column format.<br>
+          DOCX export keeps headings + bullet structure.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function addEdu(){
+    const wrap = document.getElementById("eduWrap");
+    const div = document.createElement("div");
+    div.className = "row g-2 mb-2 eduRow";
+    div.innerHTML = `
+      <div class="col-md-4"><input class="form-control" name="edu_degree" placeholder="Degree"></div>
+      <div class="col-md-5"><input class="form-control" name="edu_inst" placeholder="Institution"></div>
+      <div class="col-md-2"><input class="form-control" name="edu_year" placeholder="Year"></div>
+      <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.eduRow').remove()">x</button></div>
+    `;
+    wrap.appendChild(div);
+  }
+
+  function addExp(){
+    const wrap = document.getElementById("expWrap");
+    const div = document.createElement("div");
+    div.className = "border rounded p-2 mb-2 expRow";
+    div.innerHTML = `
+      <div class="row g-2">
+        <div class="col-md-4"><input class="form-control" name="exp_role" placeholder="Role"></div>
+        <div class="col-md-4"><input class="form-control" name="exp_company" placeholder="Company"></div>
+        <div class="col-md-3"><input class="form-control" name="exp_duration" placeholder="Duration"></div>
+        <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.expRow').remove()">x</button></div>
+      </div>
+      <label class="form-label mt-2 mb-1 small text-muted">Bullets (one per line)</label>
+      <textarea class="form-control" rows="4" name="exp_bullets"></textarea>
+    `;
+    wrap.appendChild(div);
+  }
+
+  function addProj(){
+    const wrap = document.getElementById("projWrap");
+    const div = document.createElement("div");
+    div.className = "border rounded p-2 mb-2 projRow";
+    div.innerHTML = `
+      <div class="row g-2">
+        <div class="col-md-5"><input class="form-control" name="proj_name" placeholder="Project name"></div>
+        <div class="col-md-6"><input class="form-control" name="proj_tech" placeholder="Tech (Python, Flask...)"></div>
+        <div class="col-md-1"><button class="btn btn-outline-danger w-100" type="button" onclick="this.closest('.projRow').remove()">x</button></div>
+      </div>
+      <label class="form-label mt-2 mb-1 small text-muted">Bullets (one per line)</label>
+      <textarea class="form-control" rows="4" name="proj_bullets"></textarea>
+    `;
+    wrap.appendChild(div);
+  }
+</script>
+
+{% endblock %}

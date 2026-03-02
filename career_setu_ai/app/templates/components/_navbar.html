@@ -1,0 +1,29 @@
+<header class="app-navbar">
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-light btn-sm d-lg-none" id="toggleSidebarBtn">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div class="searchbox">
+      <i class="bi bi-search"></i>
+      <input class="form-control form-control-sm" type="text" placeholder="Search resumes, jobs, scores... (Phase 0 UI)">
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-light btn-sm position-relative" onclick="CareerSetu.toast('No new notifications (Phase 0)', 'info')">
+      <i class="bi bi-bell"></i>
+      <span class="notif-dot"></span>
+    </button>
+
+    <div class="dropdown">
+      <button class="btn btn-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle me-1"></i> Guest
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="/auth/login">Login</a></li>
+        <li><a class="dropdown-item" href="/auth/signup">Signup</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
